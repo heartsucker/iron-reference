@@ -1,0 +1,22 @@
+[package]
+name = "iron-reference"
+version = "0.1.0"
+authors = ["heartsucker <heartsucker@autistici.org>"]
+
+[[bin]]
+name = "iron-reference"
+path = "src/main.rs"
+
+[dependencies]
+csrf = "*"
+env_logger = "*"
+handlebars = "*"
+handlebars-iron = "*"
+iron = "*"
+iron-csrf = "*"
+log = "*"
+router = "*"
+secure-session = "*"
+
+[dev-dependencies]
+iron-test = "*"
