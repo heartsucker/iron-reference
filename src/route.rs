@@ -3,21 +3,14 @@ use iron::headers::ContentType;
 use iron::prelude::*;
 use iron::status;
 use std::fs::File;
-use typemap;
 
-#[derive(Serialize, Deserialize)]
-pub struct SessionData {
-    pub page_view: i32,
-}
-
-impl typemap::Key for SessionData {
-    type Value = SessionData;
-}
+use super::SessionKey;
 
 
-pub fn index(_: &mut Request) -> IronResult<Response> {
+pub fn index(request: &mut Request) -> IronResult<Response> {
+    let session = request.extensions.get::<SessionKey>().unwrap();
     let mut resp = Response::new();
-    resp.set_mut(Template::new("index", String::new()))
+    resp.set_mut(Template::new("index", session.map()))
         .set_mut(status::Ok);
     Ok(resp)
 }

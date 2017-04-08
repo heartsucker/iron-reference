@@ -26,8 +26,7 @@ use iron::prelude::*;
 use iron_csrf::{CsrfConfig, CsrfProtectionMiddleware};
 use secure_session::middleware::{SessionMiddleware, SessionConfig};
 use secure_session::session::{SessionManager, ChaCha20Poly1305SessionManager};
-
-use route::SessionData;
+use std::collections::HashMap;
 
 fn main() {
     env_logger::init().expect("couldn't start env logger");
@@ -49,9 +48,10 @@ fn get_handler() -> Box<Handler> {
     let csrf = CsrfProtectionMiddleware::new(protection, csrf_config);
 
     info!("Initializing session management");
-    let session_mgr = ChaCha20Poly1305SessionManager::from_password(password);
+    let session_mgr = ChaCha20Poly1305SessionManager::<Session>::from_password(password);
     let session_config = SessionConfig::default();
-    let session_middleware = SessionMiddleware::new(session_mgr, session_config);
+    let session_middleware =
+        SessionMiddleware::<Session, SessionKey, ChaCha20Poly1305SessionManager<Session>>::new(session_mgr, session_config);
 
     info!("Initializing handlebars engine");
     let mut hbse = HandlebarsEngine::new();
@@ -63,10 +63,7 @@ fn get_handler() -> Box<Handler> {
     info!("Building handler");
     let mut chain = Chain::new(routes());
     chain.link_before(PageViewCounter {});
-
     let handler = csrf.around(session_middleware.around(Box::new(chain)));
-    let counter = PageViewCounter {};
-
     let mut chain = Chain::new(handler);
     chain.link_after(hbse);
 
@@ -82,25 +79,46 @@ fn routes() -> Box<Handler> {
     ))
 }
 
-// TODO DUDE LOOK HERE
-// TODO DUDE LOOK HERE
-// TODO DUDE LOOK HERE
-// TODO DUDE LOOK HERE
-// TODO DUDE LOOK HERE
-// TODO DUDE LOOK HERE
-// TODO this middleware needs to yank out the session data type and not the raw session
-//      otherwise everyone has to write shim middleware just to make everything work
+#[derive(Serialize, Deserialize)]
+pub struct Session {
+    page_views: i32,
+}
+
+impl Session {
+    pub fn map(&self) -> HashMap<String, String> {
+        let mut map = HashMap::new();
+        let _ = map.insert("page_views".to_string(), self.page_views.to_string());
+        map
+    }
+}
+
+struct SessionKey {}
+
+impl typemap::Key for SessionKey {
+    type Value = Session;
+}
+
 struct PageViewCounter {}
 
 impl BeforeMiddleware for PageViewCounter {
     fn before(&self, request: &mut Request) -> IronResult<()> {
-        match request.extensions.get_mut::<SessionData>() {
-            Some(session) => {
-                session.get_bytes("data");
-                unimplemented!() // TODO
-            },
-            None => unimplemented!(), // TODO
+        if request.url.path().len() > 0 && request.url.path()[0] != "static" {
+            let session = match request.extensions.remove::<SessionKey>() {
+                Some(mut session) => {
+                   session.page_views += 1; 
+                   session
+                },
+                None => {
+                    Session {
+                        page_views: 1,
+                    }
+                }
+            };
+
+            let _ = request.extensions.insert::<SessionKey>(session);
         }
+
+        Ok(())
     }
 
     fn catch(&self, _: &mut Request, err: IronError) -> IronResult<()> {
