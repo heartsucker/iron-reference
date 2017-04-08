@@ -4,9 +4,24 @@
     <meta charset="utf-8"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link href="/static/css/styles.css" rel="stylesheet">
     <title>Iron Reference</title>
   </head>
   <body>
-    <p>test</p>
+    <header>
+      <h1>Iron Reference</h1>
+    </header>
+    <div class="body"> 
+      <p>This is a very simple webpage that shows how some basic security features can be
+        integrated into an Iron application. It uses
+        <a href="https://crates.io/crates/iron-csrf"><code>iron-csrf</code></a> to provide protection
+        against cross site request forgery. It also uses 
+        <a href="https://crates.io/crates/rust-secure-session"><code>secure-session</code></a> to
+        provide encrypted, authenticated session cookies to maintain state between requests.
+      </p>
+    </div>
+    <footer>
+      <p>From water does all life begin.</p> 
+    </footer>
   </body>
 </html>

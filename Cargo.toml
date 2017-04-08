@@ -8,6 +8,7 @@ name = "iron-reference"
 path = "src/main.rs"
 
 [dependencies]
+bincode = "*"
 csrf = "*"
 env_logger = "*"
 handlebars = "*"
@@ -17,6 +18,9 @@ iron-csrf = "*"
 log = "*"
 router = "*"
 secure-session = "*"
+serde = "*"
+serde_derive = "*"
+typemap = "*"
 
 [dev-dependencies]
 iron-test = "*"

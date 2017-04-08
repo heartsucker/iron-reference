@@ -1,0 +1,25 @@
+body {
+  max-width: 800px;
+  margin: 0 auto;
+
+  font-family: Georgia, Serif;
+  line-height: 1.5em;
+  text-align: justify;
+  color: #1b1b1b;
+  background-color: #fbfbfb;
+  text-rendering: geometricPrecision;
+
+  .body {
+    a {
+      color: inherit;
+    }
+
+    code {
+      font-size: 15px;
+    } 
+  }
+
+  footer {
+    font-height: 8px;
+  }
+}
