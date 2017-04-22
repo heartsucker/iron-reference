@@ -12,4 +12,6 @@ scss: ## Compile the SCSS into CSS
 		echo -e 'scss not compiled :('
 
 travis: ## Run the TravisCI tests
-	@cargo test
+	@cargo build --verbose && \
+		cargo test --verbose || \
+		{ cat Cargo.lock; exit 1; }
