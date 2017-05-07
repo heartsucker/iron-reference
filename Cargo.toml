@@ -18,8 +18,8 @@ iron-csrf = "*"
 log = "*"
 router = "*"
 secure-session = "*"
-serde = "0.9"
-serde_derive = "0.9"
+serde = "*"
+serde_derive = "*"
 typemap = "*"
 
 [dev-dependencies]
