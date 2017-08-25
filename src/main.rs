@@ -1,5 +1,4 @@
 extern crate bincode;
-extern crate csrf;
 extern crate env_logger;
 extern crate handlebars;
 extern crate handlebars_iron;
@@ -19,11 +18,11 @@ extern crate typemap;
 
 mod route;
 
-use csrf::{AesGcmCsrfProtection, CsrfProtection};
 use handlebars_iron::{HandlebarsEngine, DirectorySource};
 use iron::middleware::{AroundMiddleware, Handler, Chain, BeforeMiddleware};
 use iron::prelude::*;
 use iron_csrf::{CsrfConfig, CsrfProtectionMiddleware};
+use iron_csrf::csrf::{AesGcmCsrfProtection, CsrfProtection};
 use secure_session::middleware::{SessionMiddleware, SessionConfig};
 use secure_session::session::{SessionManager, ChaCha20Poly1305SessionManager};
 use std::collections::HashMap;
