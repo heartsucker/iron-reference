@@ -22,9 +22,9 @@ use handlebars_iron::{HandlebarsEngine, DirectorySource};
 use iron::middleware::{AroundMiddleware, Handler, Chain, BeforeMiddleware};
 use iron::prelude::*;
 use iron_csrf::{CsrfConfig, CsrfProtectionMiddleware};
-use iron_csrf::csrf::{AesGcmCsrfProtection, CsrfProtection};
+use iron_csrf::csrf::AesGcmCsrfProtection;
 use secure_session::middleware::{SessionMiddleware, SessionConfig};
-use secure_session::session::{SessionManager, ChaCha20Poly1305SessionManager};
+use secure_session::session::ChaCha20Poly1305SessionManager;
 use std::collections::HashMap;
 
 fn main() {
@@ -39,15 +39,15 @@ fn main() {
 
 fn get_handler() -> Box<Handler> {
     // Note: in real life, this password should come from a configuration file
-    let password = b"very-very-secret";
+    let key = *b"01234567012345670123456701234567";
 
     info!("Initializing CSRF protection");
-    let protection = AesGcmCsrfProtection::from_password(password);
+    let protection = AesGcmCsrfProtection::from_key(key);
     let csrf_config = CsrfConfig::default();
     let csrf = CsrfProtectionMiddleware::new(protection, csrf_config);
 
     info!("Initializing session management");
-    let session_mgr = ChaCha20Poly1305SessionManager::<Session>::from_password(password);
+    let session_mgr = ChaCha20Poly1305SessionManager::<Session>::from_key(key);
     let session_config = SessionConfig::default();
     let session_middleware =
         SessionMiddleware::<Session, SessionKey, ChaCha20Poly1305SessionManager<Session>>::new(session_mgr, session_config);
