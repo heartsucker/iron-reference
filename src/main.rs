@@ -28,7 +28,7 @@ use secure_session::session::ChaCha20Poly1305SessionManager;
 use std::collections::HashMap;
 
 fn main() {
-    env_logger::init().expect("couldn't start env logger");
+    env_logger::init();
 
     info!("Preparing server");
     let handler = get_handler();
@@ -37,7 +37,7 @@ fn main() {
     Iron::new(handler).http("localhost:8080").expect("failed to start server");
 }
 
-fn get_handler() -> Box<Handler> {
+fn get_handler() -> Box<dyn Handler> {
     // Note: in real life, this password should come from a configuration file
     let key = *b"01234567012345670123456701234567";
 
@@ -71,7 +71,7 @@ fn get_handler() -> Box<Handler> {
     Box::new(chain)
 }
 
-fn routes() -> Box<Handler> {
+fn routes() -> Box<dyn Handler> {
     Box::new(router!(
         index: get "/" => route::index,
         _static: get "/static/*" => route::_static,
